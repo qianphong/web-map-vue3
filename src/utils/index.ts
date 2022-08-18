@@ -108,11 +108,33 @@ export function lngLat2Mercator() {
 
 /**
  * 墨卡托投影（EPSG:3857）转 经纬度（EPSG:4326）
+ * @param pos [x, y] 经纬度
+ * @returns [lng,lat] 坐标
+ */
+export function mercator2LngLat(
+  pos: readonly [x: number, y: number],
+): [lng: number, lat: number]
+
+/**
+ * 墨卡托投影（EPSG:3857）转 经纬度（EPSG:4326）
  * @param x x 坐标
  * @param y y 坐标
  * @returns [lng,lat] 经纬度
  */
-export function mercator2LngLat(x: number, y: number): [number, number] {
+export function mercator2LngLat(
+  x: number,
+  y: number,
+): [lng: number, lat: number]
+
+export function mercator2LngLat() {
+  let x: number, y: number
+  if (Array.isArray(arguments[0])) {
+    x = arguments[0][0]
+    y = arguments[0][1]
+  } else {
+    x = arguments[0]
+    y = arguments[1]
+  }
   const lng = rad2Angle(x) / EARTH_RAD
   const lat = rad2Angle(2 * Math.atan(Math.exp(y / EARTH_RAD)) - Math.PI / 2)
   return [lng, lat]

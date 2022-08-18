@@ -1,35 +1,30 @@
 <script setup lang="ts">
 import { type Config, renderMap } from './utils/renderMap'
-
+import { AMap } from './utils/AMap'
 const config: Config = {
   lang: 'zh_cn',
-  z: 16,
+  z: 15, // 3 ~ 18
   size: 1,
   style: 8,
   center: [120.005627, 31.790637],
 }
 
-const canvas = $ref<HTMLCanvasElement>()
+const container = $ref<HTMLDivElement>()
 
 onMounted(() => {
-  const { width, height } = useWindowSize()
-  throttledWatch(
-    [width, height],
-    () => {
-      renderMap(canvas, config, { height: height.value, width: width.value })
-    },
-    { throttle: 100, immediate: true },
-  )
+  const amap = new AMap(container, { zoom: 15 })
 })
 </script>
 
 <template>
-  <div class="map-container">
-    <canvas ref="canvas"></canvas>
-  </div>
+  <div class="map-container" ref="container"></div>
 </template>
 
 <style>
+.map-container {
+  height: 100vh;
+  width: 100vw;
+}
 .map-container canvas {
   display: block;
 }
