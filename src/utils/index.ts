@@ -1,3 +1,6 @@
+export type Position = [x: number, y: number]
+export type LngLat = [Lng: number, Lat: number]
+
 /**
  * 地球半径
  */
@@ -29,7 +32,10 @@ export function getResolution(z: number) {
  * @param y 瓦片像素y
  * @returns 瓦片坐标
  */
-export function getTileRowAndCol(x: number, y: number): [number, number] {
+export function getTileColAndRow(
+  x: number,
+  y: number,
+): [col: number, row: number] {
   return [Math.floor(x / TILE_SIZE), Math.floor(y / TILE_SIZE)]
 }
 
@@ -40,17 +46,31 @@ export function getTileRowAndCol(x: number, y: number): [number, number] {
  * @param z 缩放
  * @returns 像素坐标[x,y]
  */
-export function getPxFromLngLat(
-  lng: number,
-  lat: number,
-  z: number,
-): [number, number] {
+export function getPxFromLngLat(lng: number, lat: number, z: number): Position {
   let [x, y] = lngLat2Mercator(lng, lat)
   x = EARTH_PERIMETER / 2 + x
   y = EARTH_PERIMETER / 2 - y
   const resolution = getResolution(z)
   return [Math.floor(x / resolution), Math.floor(y / resolution)]
 }
+
+/**
+ * 根据墨卡托坐标获取像素位置
+ * @param x 经度
+ * @param y 纬度
+ * @param resolution 分辨率
+ * @returns 像素坐标[x,y]
+ */
+export function getPxFromMercator(
+  x: number,
+  y: number,
+  resolution: number,
+): Position {
+  x = EARTH_PERIMETER / 2 + x
+  y = EARTH_PERIMETER / 2 - y
+  return [Math.floor(x / resolution), Math.floor(y / resolution)]
+}
+
 /**
  * 角度转弧度
  * @param angle 角度
@@ -74,9 +94,7 @@ export function rad2Angle(rad: number) {
  * @param pos [lng,lat] 经纬度
  * @returns [x, y] 坐标
  */
-export function lngLat2Mercator(
-  pos: readonly [lng: number, lat: number],
-): [x: number, y: number]
+export function lngLat2Mercator(pos: LngLat): Position
 
 /**
  * 经纬度（EPSG:4326）转 墨卡托投影（EPSG:3857）
@@ -84,10 +102,7 @@ export function lngLat2Mercator(
  * @param lat 纬度
  * @returns [x, y] 坐标
  */
-export function lngLat2Mercator(
-  lng: number,
-  lat: number,
-): [x: number, y: number]
+export function lngLat2Mercator(lng: number, lat: number): Position
 
 export function lngLat2Mercator() {
   let lng: number, lat: number
@@ -111,9 +126,7 @@ export function lngLat2Mercator() {
  * @param pos [x, y] 经纬度
  * @returns [lng,lat] 坐标
  */
-export function mercator2LngLat(
-  pos: readonly [x: number, y: number],
-): [lng: number, lat: number]
+export function mercator2LngLat(pos: Position): LngLat
 
 /**
  * 墨卡托投影（EPSG:3857）转 经纬度（EPSG:4326）
@@ -121,10 +134,7 @@ export function mercator2LngLat(
  * @param y y 坐标
  * @returns [lng,lat] 经纬度
  */
-export function mercator2LngLat(
-  x: number,
-  y: number,
-): [lng: number, lat: number]
+export function mercator2LngLat(x: number, y: number): LngLat
 
 export function mercator2LngLat() {
   let x: number, y: number

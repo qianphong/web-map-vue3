@@ -1,18 +1,10 @@
 <script setup lang="ts">
-import { type Config, renderMap } from './utils/renderMap'
 import { AMap } from './utils/AMap'
-const config: Config = {
-  lang: 'zh_cn',
-  z: 15, // 3 ~ 18
-  size: 1,
-  style: 8,
-  center: [120.005627, 31.790637],
-}
 
 const container = $ref<HTMLDivElement>()
 
 onMounted(() => {
-  const amap = new AMap(container, { zoom: 15 })
+  const amap = new AMap(container)
 })
 </script>
 
