@@ -69,7 +69,9 @@ export class AMap {
     if (config?.draggable) {
       this.initDrag()
     }
-
+    target.addEventListener('wheel', e => {
+      this.setZoom(e.deltaY > 0 ? --this.zoom : ++this.zoom)
+    })
     window.addEventListener('resize', () => {
       this.resize()
     })
