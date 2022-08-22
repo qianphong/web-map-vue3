@@ -70,7 +70,26 @@ export class AMap {
       this.initDrag()
     }
     target.addEventListener('wheel', e => {
-      this.setZoom(e.deltaY > 0 ? --this.zoom : ++this.zoom)
+      const { offsetX, offsetY } = e
+      const { clientHeight, clientWidth } = this.target
+
+      // 目的保证缩放比例切换后，鼠标下坐标保持不变
+      // 记录鼠标滚动坐标
+      const dx = clientWidth / 2 - offsetX
+      const dy = clientHeight / 2 - offsetY
+
+      // 鼠标滚动时墨卡托坐标位置
+      const pos = [
+        this.position[0] - dx * this.resolution,
+        this.position[1] + dy * this.resolution,
+      ]
+      this.setZoom(e.deltaY > 0 ? this.zoom - 1 : this.zoom + 1, false)
+      // 根据上面记录的坐标 和 zoom变更后的分辨率重新设置中心点，保证位置一致
+      this.position = [
+        pos[0] + dx * this.resolution,
+        pos[1] - dy * this.resolution,
+      ]
+      this.render()
     })
     window.addEventListener('resize', () => {
       this.resize()
@@ -79,7 +98,7 @@ export class AMap {
   }
 
   private render() {
-    console.log('render')
+    // console.log('render')
 
     // 中心点瓦片位置，相对于中心的偏移量
     const info = this.getCenterInfo()
@@ -142,27 +161,23 @@ export class AMap {
   // 初始化拖拽
   initDrag() {
     let mouseFlag = false
-    let lastPos: Position = [0, 0]
 
-    this.target.onmousedown = e => {
+    this.target.onmousedown = () => {
       mouseFlag = true
-      lastPos = [e.clientX, e.clientY]
     }
 
-    this.target.onmousemove = useThrottleFn(e => {
+    this.target.onmousemove = e => {
       if (!mouseFlag) return
-      const { clientX, clientY } = e
-      const offsetX = clientX - lastPos[0]
-      const offsetY = clientY - lastPos[1]
-      // console.log(offsetX, offsetY)
-      this.position = [this.position[0] - offsetX, this.position[1] + offsetY]
+      const { movementX, movementY } = e
+      this.position = [
+        this.position[0] - movementX * this.resolution,
+        this.position[1] + movementY * this.resolution,
+      ]
       this.render()
-      lastPos = [clientX, clientY]
-    }, 100)
+    }
 
     this.target.onmouseup = () => {
       mouseFlag = false
-      lastPos = [0, 0]
     }
   }
 
@@ -235,7 +250,7 @@ class Tile {
     if (!this.loaded || !this.opts.shouldRender(this.key)) {
       return
     }
-    console.log('tile render')
+    // console.log('tile render')
     this.ctx.drawImage(this.img, this.position[0], this.position[1])
   }
 
