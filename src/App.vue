@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AMap } from './utils/AMap'
+import { AMap } from './AMap'
 
 const container = $ref<HTMLDivElement>()
 

@@ -1,5 +1,4 @@
-export type Position = [x: number, y: number]
-export type LngLat = [Lng: number, Lat: number]
+import type { LngLat, Position } from './types'
 
 /**
  * 地球半径
@@ -94,7 +93,7 @@ export function rad2Angle(rad: number) {
  * @param pos [lng,lat] 经纬度
  * @returns [x, y] 坐标
  */
-export function lngLat2Mercator(pos: LngLat): Position
+export function lngLat2Mercator(lngLat: LngLat): Position
 
 /**
  * 经纬度（EPSG:4326）转 墨卡托投影（EPSG:3857）
